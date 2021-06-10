@@ -1,6 +1,6 @@
 FROM openjdk:11
 LABEL org.opencontainers.image.authors="Edvan Jeronimo"
-EXPOSE 8888
+EXPOSE 8092
 ADD target/case-crud-backend.jar case-crud-backend.jar
 ENV aws.service-endpoint="dynamodb.us-east-1.amazonaws.com"
 ENV aws.region="us-east-1"
