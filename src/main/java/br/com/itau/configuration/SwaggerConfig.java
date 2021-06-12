@@ -26,7 +26,9 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("")
+		return new ApiInfoBuilder()
+				.title("Backend AWS Crud")
+				.description("Backend for Camel Crud AWS")
 				.version("1.0")
 				.contact(new Contact("Edvan Jeronimo", "https://www.linkedin.com.br/in/edvan-jeronimo", "edvan.j@gmail.com"))
 				.build();

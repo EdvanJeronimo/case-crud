@@ -1,9 +1,9 @@
 FROM openjdk:11
 LABEL org.opencontainers.image.authors="Edvan Jeronimo"
-EXPOSE 8092
+EXPOSE 8080
 ADD target/case-crud-backend.jar case-crud-backend.jar
-ENV aws.service-endpoint="dynamodb.us-east-1.amazonaws.com"
-ENV aws.region="us-east-1"
-ENV aws.access.key="AKIA5ITUU4LMDDQGLU5Q"
-ENV aws.access.pwd="2vEnchge/YU9fhHfRITBeZ8iUCDDQF5RVwrgiEwy"
+ENV AWS_SERVICE_ENDPOINT="dynamodb.us-east-1.amazonaws.com"
+ENV AWS_REGION="us-east-1"
+ENV AWS_KEY="AKIA5ITUU4LML6OAOGGS"
+ENV AWS_SECRET="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"
 ENTRYPOINT ["java", "-jar","/case-crud-backend.jar"]

@@ -17,6 +17,7 @@ public class ClientPersistence {
 			client.setName(dto.getName());
 			client.setPhone(dto.getPhone());
 			client.setAge(dto.getAge());
+			client.setClientId(dto.getClientId());
 			
 			if(!Optional.ofNullable(dto.getAddress()).isEmpty()) {
 				var address = new Address();
@@ -42,6 +43,7 @@ public class ClientPersistence {
 			dto.setName(client.getName());
 			dto.setPhone(client.getPhone());
 			dto.setAge(client.getAge());
+			dto.setClientId(client.getClientId());
 			
 			if(!Optional.ofNullable(client.getAddress()).isEmpty()) {
 				var address = new AddressDTO();

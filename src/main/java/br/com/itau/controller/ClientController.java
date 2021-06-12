@@ -1,6 +1,5 @@
 package br.com.itau.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.itau.dto.ClientDTO;
 import br.com.itau.service.ClientService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
+@Api(value = "Client Controller CRUD")
 public class ClientController {
 
 	@Autowired
 	private ClientService service;
+	
+	public ClientController(ClientService service) {
+		this.service = service;
+	}
 
 	@ApiOperation("Search client with cpf")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
@@ -33,9 +38,9 @@ public class ClientController {
 			@ApiResponse(code = 403, message = "Forbidden"),
 			@ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 500, message = "Internal Server Error") })
-	@GetMapping("/search/{cpf}")
-	public ResponseEntity<ClientDTO> search(@PathVariable(name = "cpf") BigDecimal cpf) {
-		return service.searchClient(cpf);
+	@GetMapping("/search/{clientId}")
+	public ResponseEntity<ClientDTO> search(@PathVariable(name = "clientId") String clientId) {
+		return service.searchClient(clientId);
 	}
 
 	@ApiOperation("Search all clients")
@@ -57,7 +62,7 @@ public class ClientController {
 			@ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 500, message = "Internal Server Error") })
 	@PostMapping("/save")
-	public ResponseEntity<BigDecimal> save(@RequestBody ClientDTO client) {
+	public ResponseEntity<String> save(@RequestBody ClientDTO client) {
 		return service.saveClient(client);
 	}
 	

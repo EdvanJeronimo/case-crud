@@ -1,6 +1,5 @@
 package br.com.itau.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,26 +14,28 @@ import br.com.itau.dto.ClientDTO;
 import br.com.itau.model.Client;
 import br.com.itau.repository.ClientRepository;
 import br.com.itau.utils.ClientPersistence;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ClientService {
 	
 	@Autowired
 	private ClientRepository repository;
+	
+	public ClientService (ClientRepository repository) {
+		this.repository = repository;
+	}
 
-	public ResponseEntity<BigDecimal> saveClient(ClientDTO dto) {
+	public ResponseEntity<String> saveClient(ClientDTO dto) {
 		Optional<Client> client = ClientPersistence.convertDtoToModel(dto);
 		
 		if(client.isPresent()) {
 			try {
-				if(notExistsClientInDB(client.get())) {
-					BigDecimal cpf = repository.save(client.get());
-					return ResponseEntity.status(HttpStatus.CREATED).body(cpf);
-				} else {
-					return ResponseEntity.badRequest().body(client.get().getCpf());
-				}
+				String clientId = repository.save(client.get());
+				return ResponseEntity.status(HttpStatus.CREATED).body(clientId);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
 		}
@@ -42,19 +43,9 @@ public class ClientService {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
 
-	private boolean notExistsClientInDB(Client client) {
-		ResponseEntity<ClientDTO> response = searchClient(client.getCpf());
-		
-		if(response.getStatusCodeValue() == 204) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public ResponseEntity<ClientDTO> searchClient(BigDecimal cpf) {
+	public ResponseEntity<ClientDTO> searchClient(String clientId) {
 		try {
-			Client client = repository.findClient(cpf);
+			Client client = repository.findClient(clientId);
 			if(Objects.nonNull(client)) {
 				Optional<ClientDTO> dto = ClientPersistence.convertModelToDto(client);
 				return ResponseEntity.ok(dto.get());
@@ -62,7 +53,7 @@ public class ClientService {
 				return ResponseEntity.noContent().build();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -78,7 +69,7 @@ public class ClientService {
 			
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -91,7 +82,7 @@ public class ClientService {
 				repository.delete(client.get());
 				return ResponseEntity.noContent().build();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e.getMessage());
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			}
 		}
@@ -101,15 +92,19 @@ public class ClientService {
 
 	public ResponseEntity<List<ClientDTO>> searchAll() {
 		List<ClientDTO> listReturn = new ArrayList<>();
-		
-		for(Client client : repository.findAll()) {
-			listReturn.add(ClientPersistence.convertModelToDto(client).get());
-		}
-
-		if (listReturn.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.ok(listReturn);
+		try {
+			for(Client client : repository.findAll()) {
+				listReturn.add(ClientPersistence.convertModelToDto(client).get());
+			}
+			
+			if (listReturn.isEmpty()) {
+				return ResponseEntity.noContent().build();
+			} else {
+				return ResponseEntity.ok(listReturn);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 }
